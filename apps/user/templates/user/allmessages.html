@@ -1,0 +1,93 @@
+<style>
+.modal-body {
+    max-height: calc(100vh - 300px);
+    overflow-y: auto;
+}
+</style>
+{% for thread in threads %}
+<button type="button" class="btn {% if thread in new %}btn-secondary{% else %}btn-dark{% endif %} col" data-toggle="modal" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis" data-target="#modal{{thread.id}}" data-thread="{{thread.id}}">
+    {{thread.title}}
+</button>
+{% endfor %}
+
+{% for thread in threads %}
+<div class="modal fade" id="modal{{thread.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="exampleModalLabel">
+                    <h5>{{thread.title}}</h5>
+                    <p>In this conversation:
+                        {% for user in thread.users.all %}
+                            {{user.first_name}} {{user.last_name}}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                {% for message in thread.messages.all %}
+                    <p>From: {{message.sender.first_name}} {{message.sender.last_name}} {{message.created_at}}</p>
+                    <p>Title: {{message.title}}</p>
+                    <p {% if not forloop.last %}style="border-bottom:1px solid black"{% endif %}>Message: {{message.text}}</p>
+                {% endfor %}
+            </div>
+            <div class="modal-footer">
+                <form class="answer">
+                    {% csrf_token %}
+                    <div class="container">
+                        <input type="hidden" name="nm_email" value="{% for user in thread.users.all %}{{user}}{% endfor %}">
+                        <input type="hidden" name="threadId" value="{{thread.id}}">
+                        <div class="row">
+                            <div class="col">Answer</div>
+                            <div class="col">
+                                <div class="row">
+                                    <p class="col">Title:</p>
+                                    <input class="col" type="text" name="nm_title">
+                                </div>
+                                <div class="row">
+                                    <p class="col">Message:</p>
+                                    <input class="col" type="text" name="nm_text">
+                                </div>
+                                <p id="wrong" class="row justify-content-center"></p>
+                                <div class="row justify-content-end">
+                                <input class="submission" type="submit" value="Send">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+    $('.modal').on('shown.bs.modal', function (event) {
+        var button = $(event.relatedTarget)
+        var recipient = button.data('thread')
+        $.ajax({
+            url: "/home/read/".concat(recipient),
+            method:"get",
+            success:function(e){
+                $(button).removeClass("btn-secondary");
+                $(button).addClass("btn-dark");
+            }
+        });
+    });
+    $(".answer").submit(function(e){
+        e.preventDefault();
+        $('.modal').modal('hide');
+        $.ajax({
+            url:"{% url 'main:newMessage' %}",
+            method:"post",
+            data: $(this).serialize(),
+            success:function(e){
+                $('.modal').modal('hide');
+            }
+        });
+        setTimeout(getMessages, 300);
+    });
+</script>

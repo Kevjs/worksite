@@ -1,0 +1,18 @@
+<h1>Dashboard</h1>
+<h2>Latest messages</h2>
+<div id="testingThis"></div>
+<script>
+    function last5Messages(){
+        $.ajax({
+            url:"{% url 'main:latestMessages' latest='True' %}",
+            method:"get",
+            success: function(e){
+                $("#testingThis").html(e);
+            }
+        })
+    };
+    function getMessages(){
+        last5Messages();
+    }
+    last5Messages();
+</script>

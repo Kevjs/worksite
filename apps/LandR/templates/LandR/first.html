@@ -1,0 +1,72 @@
+
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+ 
+
+<form id="create">
+    {% csrf_token %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <p class="col">First Name:</p>
+            <input class="col" type="text" name="first_name">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Last Name:</p>
+            <input class="col" type="text" name="last_name">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Email:</p>
+            <input class="col" type="text" name="email">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Phone Number:</p>
+            <input class="col" type="text" name="phone_number">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Title:</p>
+            <div id="viewT">
+                <div class="row justify-content-center">
+                    <p class="col">Title:</p>
+                    <input class="col" type="text" name="title_title">
+                </div>
+                <div class="row justify-content-center">
+                    <p class="col">Description:</p>
+                    <input class="col" type="text" name="title_description">
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Website power:</p>
+            <div id="viewW">
+                <div class="row justify-content-center">
+                    <p class="col">Title:</p>
+                    <input class="col" type="text" name="website_power_title">
+                </div>
+            </div>
+        </div>
+        <p id="wrong" class="row justify-content-center"></p>
+        <div class="row justify-content-end">
+        <input class="submission" type="submit" value="Create User">
+        </div>
+    </div>
+</form>
+
+<script>
+    $("#create").submit(function(e){
+        e.preventDefault();
+        $.ajax({
+            url:"{% url 'login:firstP' %}",
+            method:"post",
+            data:$(this).serialize(),
+            success:function(b){
+                if(b == "Success"){
+                    window.location="{% url 'main:home' %}";
+                }else{
+                    $("#wrong").html("You messed up somewhere in the user info");
+                }
+            }
+        })
+    })
+</script>

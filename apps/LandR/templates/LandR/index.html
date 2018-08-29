@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Login</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <style>
+        #wrapper{
+            border-radius: 5%;
+            background:orange;
+            padding-bottom:100px;
+        }
+        .temp{
+            border-bottom:10px solid black;
+        }
+        .container{
+            padding-top:50px;
+            max-width: 90%;
+        }
+        body{
+            padding:3%;
+            background:black;
+        }
+        #wrong{
+            height:20px;
+        }
+        .submission{
+            border-radius: 10px;
+            background: black;
+            color:orange;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <div class="container">
+            <div class="row justify-content-center temp">
+                <h1>Log In</h1>
+            </div>
+        </div>
+        <form id="login" method="POST" action="{% url 'login:login' %}">
+            {% csrf_token %}
+            <div class="container">
+                <div class="row justify-content-center">
+                    <p class="col">Email:</p>
+                    <input class="col" type="text" name="email">
+                </div>
+                <div class="row">
+                    <p class="col">Password:</p>
+                    <input class="col" type="password" name="password">
+                </div>
+                <p id="wrong" class="row justify-content-center"></p>
+                <div class="row justify-content-end">
+                <input class="submission" type="submit" value="Log in">
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        $("#login").submit(function(e){
+            e.preventDefault();
+            $.ajax({
+                url:"{% url 'login:login' %}",
+                method:"post",
+                data:$(this).serialize(),
+                success:function(b){
+                    if(b == "Success"){
+                        window.location="{% url 'main:home' %}";
+                    }else{
+                        $("#wrong").html("Email or password don't match");
+                    }
+                }
+            })
+        })
+    </script>
+</body>
+</html>

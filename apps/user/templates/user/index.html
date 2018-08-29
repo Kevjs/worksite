@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{{request.session.name}}</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <style>
+        body{
+            background:orange;
+        }
+        body *{
+            margin:0;
+            padding:0;
+        }
+        #top p, #top nav{
+            display: inline-block;
+        }
+        #top *, #top{
+            background-color: #b1b1b1;
+        }
+        table th, table td{
+            border: 1px solid black;
+        }
+    </style>
+    <script>
+        function loadDash(){
+            $.ajax({
+                method:'get',
+                url:'{% url "dash:home" %}',
+                data:'',
+                success:function(e){
+                    $("#content").html(e);
+                }                
+            })
+        }
+
+        function loadMessages(){
+            $.ajax({
+                method:'get',
+                url:'{% url "main:messages" %}',
+                data:'',
+                success:function(e){
+                    $("#content").html(e);
+                }                
+            })
+        }
+
+        function loadAdmin(){
+            $.ajax({
+                method:'get',
+                url:'{% url "myAdmin:home" %}',
+                data:'',
+                success:function(e){
+                    $("#content").html(e);
+                }                
+            })
+        }
+
+        function loadProfile(){
+            $.ajax({
+                method:'get',
+                url:'{% url "profile:home" %}',
+                success:function(e){
+                    $("#content").html(e);
+                }                
+            })
+        }
+
+        function loadPage() {
+            loadDash();
+        }
+
+        $(document).ready(function(){
+            loadPage();
+        })
+    </script>
+</head>
+<body>
+    <div id="top">
+        <p>Welcome {{request.session.name}}</p>
+        <nav>
+            <a class="ajaxLink" href="#" data-value='dash'>Dashboard</a>
+            <a class="ajaxLink" href="#" data-value='messages'>Messages</a>
+            <a class="ajaxLink" href="#" data-value='profile'>Profile</a>
+            {% if level > 500 %}
+            <a class="ajaxLink" href="#" data-value='admin'>Admin</a>
+            {% endif %}
+            <a href="{% url 'login:logout' %}">Log out</a>
+        </nav>
+    </div>
+    <div id="content"></div>
+    <script>
+        $('a.ajaxLink').click(function() {
+            temp = [$(this).attr('data-value')];
+            if(temp == "messages"){
+                loadMessages();
+            }else if(temp == "dash"){
+                loadDash();
+            }else if(temp == "profile"){
+                loadProfile();
+            }else if(temp == "admin"){
+                loadAdmin();
+            }
+            return false; 
+        })
+    </script>
+</body>
+</html>

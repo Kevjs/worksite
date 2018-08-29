@@ -1,0 +1,93 @@
+<script>
+    function submitAjaxForm() {
+        $.ajax({
+            url:'{% url "main:tables" %}',
+            method:'post',
+            data: $("#pagination").serialize(),
+            success:function(e){
+                $("#table").html(e)
+            }
+        })
+    }
+    function getMessages(){
+        $.ajax({
+            url:'{% url "main:getMessages" %}',
+            method:'get',
+            success : function(e){
+                $("#messageBoard").html(e)
+            }
+        })
+    }
+    function between(){
+        $('input[name=page_number]').val(1);
+        submitAjaxForm();
+    }
+    
+    $("#newMessage").submit(function(e){
+        e.preventDefault();
+        $.ajax({
+            url:"{% url 'main:newMessage' %}",
+            method:"post",
+            data: $(this).serialize(),
+            success:function(e){
+                if(e == "Success"){
+                    getMessages();
+                    $("#newMessage input[type=text]").val('');
+                }
+                else{
+                    serverA = ""
+                    $.each(e["hi"], function(key, value){
+                        serverA += "<p class='error'>"+value+"</p>"
+                        console.log("Key is " + key);
+                        console.log("Value is " + value);
+                    });
+                    $("#nmError").html(serverA)
+                }
+            }
+        });
+    });
+</script>
+
+<form style="display:inline-block" id="pagination" class="ajax_form" id="input">
+    {% csrf_token %}
+    Show: <select name="many" onchange="between();"><option value="all">All</option><option value="2">2</option><option value="5">5</option><option value ="10">10</option></select>
+    Name:<input type="text" name="name">
+    <input type='hidden' name='page_number' value='1'>
+    {% for title in titles %}
+        <input onchange="between();" checked type="checkbox" name="{{title.title}}">{{title.title}}
+    {% endfor %}
+</form>
+<div id="table"></div>
+<form id="newMessage">
+    {% csrf_token %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <p class="col">Receiving Email:</p>
+            <input class="col" type="text" name="nm_email">
+        </div>
+        <div class="row">
+            <p class="col">Title:</p>
+            <input class="col" type="text" name="nm_title">
+        </div>
+        <div class="row">
+            <p class="col">Message:</p>
+            <input class="col" type="text" name="nm_text">
+        </div>
+        <p id="wrong" class="row justify-content-center"></p>
+        <div class="row justify-content-end">
+        <input class="submission" type="submit" value="Send">
+        </div>
+    </div>
+</form>
+<div id="nmError"></div>
+<div id="messageBoard">Temp</div>
+<script>
+    between();
+    getMessages();
+    $(".ajax_form").submit(function(e){
+        e.preventDefault();
+    })
+    $('#pagination input[name=name]').keyup(function() {
+        between();
+    });
+</script>

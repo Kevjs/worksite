@@ -1,0 +1,81 @@
+<form id="createUser">
+    {% csrf_token %}
+    <div class="container">
+        <div class="row justify-content-center">
+            <p class="col">First Name:</p>
+            <input class="col" type="text" name="first_name">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Last Name:</p>
+            <input class="col" type="text" name="last_name">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Email:</p>
+            <input class="col" type="text" name="email">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Phone Number:</p>
+            <input class="col" type="text" name="phone_number">
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Title:</p>
+            <select name="select_title">
+            {% for x in titles %}
+            <option value="{{x.title}}">{{x.title}}</option>
+            {% endfor %}
+            <option value="new">New </option>
+            </select>
+            <div id="viewT">
+                <div class="row justify-content-center">
+                    <p class="col">Title:</p>
+                    <input class="col" type="text" name="title_title">
+                </div>
+                <div class="row justify-content-center">
+                    <p class="col">Description:</p>
+                    <input class="col" type="text" name="title_description">
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <p class="col">Website power:</p>
+            <select name="select_level">
+            {% for x in levels %}
+            <option value="{{x.title}}">{{x.title}}</option>
+            {% endfor %}
+            <option value="new">New </option>
+            </select>
+            <div id="viewW">
+                <div class="row justify-content-center">
+                    <p class="col">Title:</p>
+                    <input class="col" type="text" name="website_power_title">
+                </div>
+                <div class="row justify-content-center">
+                    <p class="col">Level:</p>
+                    <input class="col" type="text" name="website_power_level">
+                </div>
+            </div>
+        </div>
+        <p id="wrong" class="row justify-content-center"></p>
+        <div class="row justify-content-end">
+        <input class="submission" type="submit" value="Create User">
+        </div>
+    </div>
+</form>
+<div id="wrong"></div>
+<script>
+    $("#createUser").submit(function(e){
+        e.preventDefault();
+        $.ajax({
+            url:"{% url 'myAdmin:newUser' %}",
+            method:"post",
+            data:$(this).serialize(),
+            success:function(b){
+                if(b == "Success"){
+                    window.location="{% url 'main:home' %}";
+                }else{
+                    $("#wrong").html("Something went wrong");
+                }
+            }
+        })
+    })
+</script>

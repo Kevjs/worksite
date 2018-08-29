@@ -1,0 +1,31 @@
+
+<table>
+    <thead>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
+        <th>Position</th>
+    </thead>
+        {% for user in users %}
+        <tr>
+            <td><a href="#" class="sendingTo" data-value="{{user.email}}">{{user.first_name}} {{user.last_name}}</a></td>
+            <td>{{user.email}}</td>
+            <td>{{user.phone_number}}</td>
+            <td>{{user.title.title}}</td>
+        </tr>
+        {% endfor %}
+</table>
+{% for x in pages %}
+    <a href="#" class="table_link" data-value='{{ forloop.counter }}'>{{ forloop.counter }}</a>
+{% endfor %}
+<script>
+    $('a.table_link').click(function() {
+        $('input[name=page_number]').val( $(this).attr('data-value') );
+        submitAjaxForm();
+        return false; 
+    })
+    $('a.sendingTo').click(function() {
+        $("#newMessage input[name=nm_email]").val($(this).attr('data-value'));
+        return false; 
+    })
+</script>
